@@ -297,7 +297,7 @@
 
   <div class="topbar">
     <div class="brand">한국어 <em>study</em></div>
-    <div class="examtag">TOPIK I — <span id="daysLeft">61</span> days left</div>
+    <div class="examtag">TOPIK I — <span id="daysLeft">—</span> days left</div>
   </div>
 
   <div class="xp-bar-wrap">
@@ -421,6 +421,11 @@ const BADGES = [
 ];
 
 const GOAL_HRS = 120;
+const EXAM_DATE = new Date('2026-07-05');
+function daysLeft() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.max(0, Math.round((EXAM_DATE - today) / 864e5));
+}
 
 function todayKey() { return new Date().toISOString().slice(0,10); }
 function load() { try { return JSON.parse(localStorage.getItem('kor_tracker_v2') || '{}'); } catch { return {}; } }
@@ -509,6 +514,7 @@ function renderAll() {
   const streak = calcStreak();
   const todayMins = data[todayKey()] ? Object.values(data[todayKey()]).reduce((a,b) => a+b, 0) : 0;
 
+  document.getElementById('daysLeft').textContent = daysLeft();
   document.getElementById('sTodayMin').innerHTML = todayMins + '<span>m</span>';
   document.getElementById('sStreak').innerHTML = streak + '<span> <i class="ti ti-flame"></i></span>';
   document.getElementById('sTotalHrs').innerHTML = Math.floor(tm/60) + '<span>h</span>';
