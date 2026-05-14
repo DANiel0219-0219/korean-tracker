@@ -45,71 +45,35 @@
     padding: 2rem 1.25rem 4rem;
   }
 
-  /* Top bar */
   .topbar {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     margin-bottom: 2rem;
   }
-  .brand {
-    font-family: var(--font-disp);
-    font-size: 26px;
-    color: var(--ink);
-  }
+  .brand { font-family: var(--font-disp); font-size: 26px; color: var(--ink); }
   .brand em { font-style: italic; color: var(--rose); }
-  .examtag {
-    font-size: 12px;
-    color: var(--ink2);
-    letter-spacing: .05em;
-  }
+  .examtag { font-size: 12px; color: var(--ink2); letter-spacing: .05em; }
   .examtag span { font-weight: 500; color: var(--rose); font-size: 13px; }
 
-  /* XP bar */
   .xp-bar-wrap { margin-bottom: 1.75rem; }
-  .xp-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-  }
+  .xp-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
   .xp-level { font-size: 13px; font-weight: 500; color: var(--ink); }
   .xp-pts { font-size: 12px; color: var(--ink2); }
-  .xp-track {
-    height: 6px;
-    background: var(--warm);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-  .xp-fill {
-    height: 100%;
-    border-radius: 3px;
-    background: var(--rose);
-    transition: width .5s cubic-bezier(.4,0,.2,1);
-  }
+  .xp-track { height: 6px; background: var(--warm); border-radius: 3px; overflow: hidden; }
+  .xp-fill { height: 100%; border-radius: 3px; background: var(--rose); transition: width .5s cubic-bezier(.4,0,.2,1); }
 
-  /* Stat cards */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
     margin-bottom: 1.5rem;
   }
-  .stat-card {
-    background: var(--surface);
-    border-radius: var(--radius-md);
-    padding: 12px 14px;
-  }
-  .stat-val {
-    font-family: var(--font-disp);
-    font-size: 24px;
-    color: var(--ink);
-    line-height: 1;
-  }
+  .stat-card { background: var(--surface); border-radius: var(--radius-md); padding: 12px 14px; }
+  .stat-val { font-family: var(--font-disp); font-size: 24px; color: var(--ink); line-height: 1; }
   .stat-val span { font-size: 14px; font-family: var(--font-body); font-weight: 400; }
   .stat-lbl { font-size: 11px; color: var(--ink2); margin-top: 4px; letter-spacing: .04em; }
 
-  /* Section label */
   .section-label {
     font-size: 11px;
     letter-spacing: .08em;
@@ -119,7 +83,6 @@
     font-weight: 500;
   }
 
-  /* Cards */
   .card {
     background: var(--card-bg);
     border: 0.5px solid var(--card-border);
@@ -128,7 +91,6 @@
     margin-bottom: 1.5rem;
   }
 
-  /* Stopwatch */
   .sw-source-select {
     width: 100%;
     font-size: 13px;
@@ -154,21 +116,13 @@
   }
   .sw-btns { display: flex; gap: 8px; }
   .sw-btn {
-    flex: 1;
-    padding: 10px;
-    border-radius: var(--radius-md);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
+    flex: 1; padding: 10px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; cursor: pointer;
     transition: opacity .15s, transform .1s;
     border: 0.5px solid rgba(0,0,0,0.12);
-    background: var(--surface);
-    color: var(--ink);
+    background: var(--surface); color: var(--ink);
     font-family: var(--font-body);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
   }
   .sw-btn:active { transform: scale(0.97); }
   .sw-btn:hover { background: var(--warm); }
@@ -177,111 +131,92 @@
   .sw-btn.danger { color: var(--rose); }
   .sw-btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
 
-  /* Badges */
-  .badges-row {
-    display: flex;
+  /* Manual timer */
+  .manual-timer-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
+    align-items: end;
+    margin-bottom: 16px;
   }
-  .badge {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 11px;
-    border-radius: 99px;
-    font-size: 12px;
+  .mt-unit { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .mt-label { font-size: 11px; color: var(--ink2); letter-spacing: .06em; text-transform: uppercase; }
+  .mt-val { font-family: var(--font-disp); font-size: 42px; color: var(--ink); line-height: 1; min-width: 70px; text-align: center; }
+  .mt-adj { display: flex; gap: 6px; }
+  .mt-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 0.5px solid rgba(0,0,0,0.12);
+    background: var(--surface); color: var(--ink);
+    font-size: 20px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body);
+    transition: background .12s, transform .1s;
+    line-height: 1; font-weight: 300;
+  }
+  .mt-btn:hover { background: var(--warm); }
+  .mt-btn:active { transform: scale(0.93); }
+  .mt-divider { font-family: var(--font-disp); font-size: 40px; color: var(--ink3); text-align: center; padding-bottom: 28px; }
+
+  /* Word of the day */
+  .wotd-card {
+    background: var(--card-bg);
     border: 0.5px solid var(--card-border);
-    background: var(--surface);
-    color: var(--ink2);
+    border-radius: var(--radius-lg);
+    padding: 20px 22px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
   }
-  .badge.earned {
+  .wotd-card::before {
+    content: '';
+    position: absolute; top: 0; right: 0;
+    width: 90px; height: 90px;
     background: var(--rose-lt);
-    border-color: #e0b0a4;
-    color: var(--rose-dk);
+    border-radius: 0 0 0 90px;
+    opacity: .55;
   }
+  .wotd-emoji { font-size: 26px; position: absolute; top: 14px; right: 18px; }
+  .wotd-hangul { font-family: var(--font-disp); font-size: 36px; color: var(--ink); line-height: 1; margin-bottom: 4px; }
+  .wotd-roman { font-size: 13px; color: var(--ink2); font-style: italic; margin-bottom: 10px; }
+  .wotd-meaning { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+  .wotd-example { font-size: 13px; color: var(--ink2); line-height: 1.55; border-left: 2px solid var(--rose-lt); padding-left: 10px; }
+  .wotd-date { font-size: 11px; color: var(--ink3); margin-top: 12px; letter-spacing: .04em; }
+
+  .badges-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+  .badge {
+    display: flex; align-items: center; gap: 5px;
+    padding: 5px 11px; border-radius: 99px; font-size: 12px;
+    border: 0.5px solid var(--card-border);
+    background: var(--surface); color: var(--ink2);
+  }
+  .badge.earned { background: var(--rose-lt); border-color: #e0b0a4; color: var(--rose-dk); }
   .badge i { font-size: 14px; }
 
-  /* Streak grid */
-  .streak-grid {
-    display: flex;
-    gap: 3px;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-  }
+  .streak-grid { display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 1.5rem; }
   .s-dot {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
-    background: var(--surface);
-    border: 0.5px solid var(--card-border);
-    cursor: default;
-    transition: background .2s;
+    width: 20px; height: 20px; border-radius: 3px;
+    background: var(--surface); border: 0.5px solid var(--card-border);
+    cursor: default; transition: background .2s;
   }
   .s-dot.done { background: var(--rose); border-color: var(--rose); }
   .s-dot.today { background: var(--rose-lt); border-color: var(--rose); }
 
-  /* Charts */
-  .charts-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-  .chart-card {
-    background: var(--card-bg);
-    border: 0.5px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 16px;
-  }
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.5rem; }
+  .chart-card { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: var(--radius-lg); padding: 16px; }
   .chart-card.full { grid-column: 1 / -1; }
-  .chart-lbl {
-    font-size: 12px;
-    color: var(--ink2);
-    margin-bottom: 10px;
-  }
+  .chart-lbl { font-size: 12px; color: var(--ink2); margin-bottom: 10px; }
 
-  /* Source log */
-  .source-log-card {
-    background: var(--card-bg);
-    border: 0.5px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 16px;
-    margin-bottom: 1.5rem;
-  }
-  .src-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 0.5px solid rgba(0,0,0,0.06);
-  }
+  .source-log-card { background: var(--card-bg); border: 0.5px solid var(--card-border); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 1.5rem; }
+  .src-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid rgba(0,0,0,0.06); }
   .src-row:last-child { border-bottom: none; }
   .src-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
   .src-name { font-size: 13px; flex: 1; color: var(--ink); }
-  .src-bar-track {
-    width: 100px;
-    height: 4px;
-    background: var(--surface);
-    border-radius: 2px;
-    overflow: hidden;
-  }
+  .src-bar-track { width: 100px; height: 4px; background: var(--surface); border-radius: 2px; overflow: hidden; }
   .src-bar-fill { height: 100%; border-radius: 2px; transition: width .4s; }
   .src-mins { font-size: 12px; color: var(--ink2); min-width: 40px; text-align: right; }
 
-  /* Toast */
   .toast-wrap { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); pointer-events: none; z-index: 99; }
-  .toast {
-    background: var(--ink);
-    color: #fff;
-    font-size: 13px;
-    font-family: var(--font-body);
-    padding: 9px 20px;
-    border-radius: 99px;
-    opacity: 0;
-    transition: opacity .3s;
-    white-space: nowrap;
-  }
+  .toast { background: var(--ink); color: #fff; font-size: 13px; font-family: var(--font-body); padding: 9px 20px; border-radius: 99px; opacity: 0; transition: opacity .3s; white-space: nowrap; }
   .toast.show { opacity: 1; }
 
   @media (max-width: 480px) {
@@ -309,22 +244,10 @@
   </div>
 
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-val" id="sTodayMin">0<span>m</span></div>
-      <div class="stat-lbl">today</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="sStreak">0<span> <i class="ti ti-flame"></i></span></div>
-      <div class="stat-lbl">streak</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="sTotalHrs">0<span>h</span></div>
-      <div class="stat-lbl">total hrs</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" id="sXP">0</div>
-      <div class="stat-lbl">total XP</div>
-    </div>
+    <div class="stat-card"><div class="stat-val" id="sTodayMin">0<span>m</span></div><div class="stat-lbl">today</div></div>
+    <div class="stat-card"><div class="stat-val" id="sStreak">0<span> <i class="ti ti-flame"></i></span></div><div class="stat-lbl">streak</div></div>
+    <div class="stat-card"><div class="stat-val" id="sTotalHrs">0<span>h</span></div><div class="stat-lbl">total hrs</div></div>
+    <div class="stat-card"><div class="stat-val" id="sXP">0</div><div class="stat-lbl">total XP</div></div>
   </div>
 
   <div class="section-label">stopwatch</div>
@@ -353,6 +276,52 @@
     </div>
   </div>
 
+  <div class="section-label">manual entry</div>
+  <div class="card">
+    <select class="sw-source-select" id="mtSource">
+      <option value="vocab">Vocab book</option>
+      <option value="papers">Past papers</option>
+      <option value="hangul">Hangul book</option>
+      <option value="pimsleur">Pimsleur</option>
+      <option value="nhk">NHK Korean</option>
+      <option value="podcast">Podcast</option>
+      <option value="duolingo">Duolingo</option>
+      <option value="other">Other</option>
+    </select>
+    <div class="manual-timer-grid">
+      <div class="mt-unit">
+        <div class="mt-label">minutes</div>
+        <div class="mt-val" id="mtMins">00</div>
+        <div class="mt-adj">
+          <button class="mt-btn" onclick="mtAdj('mins',-1)">−</button>
+          <button class="mt-btn" onclick="mtAdj('mins',1)">+</button>
+        </div>
+      </div>
+      <div class="mt-divider">:</div>
+      <div class="mt-unit">
+        <div class="mt-label">seconds</div>
+        <div class="mt-val" id="mtSecs">00</div>
+        <div class="mt-adj">
+          <button class="mt-btn" onclick="mtAdj('secs',-5)">−</button>
+          <button class="mt-btn" onclick="mtAdj('secs',5)">+</button>
+        </div>
+      </div>
+    </div>
+    <button class="sw-btn primary" style="width:100%" onclick="mtLog()">
+      <i class="ti ti-check"></i> log this time
+    </button>
+  </div>
+
+  <div class="section-label">word of the day</div>
+  <div class="wotd-card">
+    <div class="wotd-emoji" id="wotdEmoji"></div>
+    <div class="wotd-hangul" id="wotdHangul"></div>
+    <div class="wotd-roman" id="wotdRoman"></div>
+    <div class="wotd-meaning" id="wotdMeaning"></div>
+    <div class="wotd-example" id="wotdExample"></div>
+    <div class="wotd-date" id="wotdDate"></div>
+  </div>
+
   <div class="section-label">achievements</div>
   <div class="badges-row" id="badgesRow"></div>
 
@@ -363,21 +332,15 @@
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-lbl">minutes / day (7 days)</div>
-      <div style="position:relative;height:150px">
-        <canvas id="chartWeek" role="img" aria-label="Bar chart of daily study minutes over the last 7 days">Daily study minutes per day.</canvas>
-      </div>
+      <div style="position:relative;height:150px"><canvas id="chartWeek"></canvas></div>
     </div>
     <div class="chart-card">
       <div class="chart-lbl">time by source</div>
-      <div style="position:relative;height:150px">
-        <canvas id="chartSource" role="img" aria-label="Donut chart of study time broken down by source">Study time by source.</canvas>
-      </div>
+      <div style="position:relative;height:150px"><canvas id="chartSource"></canvas></div>
     </div>
     <div class="chart-card full">
       <div class="chart-lbl">cumulative hours toward 120h goal</div>
-      <div style="position:relative;height:130px">
-        <canvas id="chartCum" role="img" aria-label="Line chart of cumulative study hours over time">Cumulative study hours.</canvas>
-      </div>
+      <div style="position:relative;height:130px"><canvas id="chartCum"></canvas></div>
     </div>
   </div>
 
@@ -411,13 +374,13 @@ const LEVELS = [
 ];
 
 const BADGES = [
-  { id:'first',   icon:'ti-star',        label:'First session',      check: (d)      => totalMins(d) > 0 },
-  { id:'hour1',   icon:'ti-clock',       label:'1 hour logged',      check: (d)      => totalMins(d) >= 60 },
-  { id:'streak3', icon:'ti-flame',       label:'3-day streak',       check: (_,s)    => s >= 3 },
-  { id:'streak7', icon:'ti-flame',       label:'7-day streak',       check: (_,s)    => s >= 7 },
-  { id:'tenHr',   icon:'ti-trophy',      label:'10 hours logged',    check: (d)      => totalMins(d) >= 600 },
-  { id:'allSrc',  icon:'ti-layers',      label:'All sources used',   check: (d)      => SOURCES.filter(s => sourceTotals(d)[s.id] > 0).length >= 7 },
-  { id:'topik',   icon:'ti-certificate', label:'TOPIK ready (40h)',  check: (d)      => totalMins(d) >= 2400 },
+  { id:'first',   icon:'ti-star',        label:'First session',    check: (d)   => totalMins(d) > 0 },
+  { id:'hour1',   icon:'ti-clock',       label:'1 hour logged',    check: (d)   => totalMins(d) >= 60 },
+  { id:'streak3', icon:'ti-flame',       label:'3-day streak',     check: (_,s) => s >= 3 },
+  { id:'streak7', icon:'ti-flame',       label:'7-day streak',     check: (_,s) => s >= 7 },
+  { id:'tenHr',   icon:'ti-trophy',      label:'10 hours logged',  check: (d)   => totalMins(d) >= 600 },
+  { id:'allSrc',  icon:'ti-layers',      label:'All sources used', check: (d)   => SOURCES.filter(s => sourceTotals(d)[s.id] > 0).length >= 7 },
+  { id:'topik',   icon:'ti-certificate', label:'TOPIK ready (40h)',check: (d)   => totalMins(d) >= 2400 },
 ];
 
 const GOAL_HRS = 120;
@@ -466,14 +429,12 @@ function swToggle() {
     swStart = Date.now() - swElapsed;
     swInterval = setInterval(swTick, 500);
     swRunning = true;
-    const btn = document.getElementById('swStartStop');
-    btn.innerHTML = '<i class="ti ti-player-pause"></i> pause';
+    document.getElementById('swStartStop').innerHTML = '<i class="ti ti-player-pause"></i> pause';
     document.getElementById('swLog').disabled = false;
   } else {
     clearInterval(swInterval); swRunning = false;
     swElapsed = Date.now() - swStart;
-    const btn = document.getElementById('swStartStop');
-    btn.innerHTML = '<i class="ti ti-player-play"></i> resume';
+    document.getElementById('swStartStop').innerHTML = '<i class="ti ti-player-play"></i> resume';
   }
 }
 function swTick() {
@@ -505,6 +466,106 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 2600);
 }
 
+/* Manual timer */
+let mtM = 0, mtS = 0;
+function mtAdj(unit, delta) {
+  if (unit === 'mins') {
+    mtM = Math.max(0, Math.min(599, mtM + delta));
+  } else {
+    mtS = Math.max(0, Math.min(59, mtS + delta));
+  }
+  document.getElementById('mtMins').textContent = String(mtM).padStart(2,'0');
+  document.getElementById('mtSecs').textContent = String(mtS).padStart(2,'0');
+}
+function mtLog() {
+  const totalSecs = mtM * 60 + mtS;
+  if (totalSecs < 10) { toast('Add some time first!'); return; }
+  const mins = Math.round(totalSecs / 60) || 1;
+  const src = document.getElementById('mtSource').value;
+  const key = todayKey();
+  if (!data[key]) data[key] = {};
+  data[key][src] = (data[key][src] || 0) + mins;
+  save(data);
+  mtM = 0; mtS = 0;
+  document.getElementById('mtMins').textContent = '00';
+  document.getElementById('mtSecs').textContent = '00';
+  renderAll();
+  toast(`+${mins} min logged — 잘했어요!`);
+}
+
+/* Word of the day */
+const NATURE_WORDS = [
+  { hangul:'하늘', roman:'haneul', meaning:'sky', emoji:'🌤️', example:'하늘이 파래요. — The sky is blue.' },
+  { hangul:'바다', roman:'bada', meaning:'sea / ocean', emoji:'🌊', example:'바다가 넓어요. — The ocean is vast.' },
+  { hangul:'산', roman:'san', meaning:'mountain', emoji:'⛰️', example:'산에 가고 싶어요. — I want to go to the mountain.' },
+  { hangul:'강', roman:'gang', meaning:'river', emoji:'🏞️', example:'강물이 흘러요. — The river flows.' },
+  { hangul:'숲', roman:'sup', meaning:'forest', emoji:'🌲', example:'숲이 조용해요. — The forest is quiet.' },
+  { hangul:'꽃', roman:'kkot', meaning:'flower', emoji:'🌸', example:'꽃이 예뻐요. — The flower is pretty.' },
+  { hangul:'나무', roman:'namu', meaning:'tree', emoji:'🌳', example:'나무가 커요. — The tree is big.' },
+  { hangul:'달', roman:'dal', meaning:'moon', emoji:'🌙', example:'달이 밝아요. — The moon is bright.' },
+  { hangul:'별', roman:'byeol', meaning:'star', emoji:'⭐', example:'별이 반짝여요. — The stars are twinkling.' },
+  { hangul:'비', roman:'bi', meaning:'rain', emoji:'🌧️', example:'비가 와요. — It is raining.' },
+  { hangul:'눈', roman:'nun', meaning:'snow', emoji:'❄️', example:'눈이 와요. — It is snowing.' },
+  { hangul:'바람', roman:'baram', meaning:'wind', emoji:'💨', example:'바람이 불어요. — The wind is blowing.' },
+  { hangul:'구름', roman:'gureum', meaning:'cloud', emoji:'☁️', example:'구름이 많아요. — There are many clouds.' },
+  { hangul:'햇빛', roman:'haetbit', meaning:'sunlight', emoji:'☀️', example:'햇빛이 따뜻해요. — The sunlight is warm.' },
+  { hangul:'풀', roman:'pul', meaning:'grass', emoji:'🌿', example:'풀이 초록색이에요. — The grass is green.' },
+  { hangul:'모래', roman:'morae', meaning:'sand', emoji:'🏖️', example:'모래가 부드러워요. — The sand is soft.' },
+  { hangul:'돌', roman:'dol', meaning:'stone / rock', emoji:'🪨', example:'돌이 딱딱해요. — The stone is hard.' },
+  { hangul:'새', roman:'sae', meaning:'bird', emoji:'🐦', example:'새가 날아요. — The bird is flying.' },
+  { hangul:'물', roman:'mul', meaning:'water', emoji:'💧', example:'물이 맑아요. — The water is clear.' },
+  { hangul:'호수', roman:'hosu', meaning:'lake', emoji:'🏔️', example:'호수가 아름다워요. — The lake is beautiful.' },
+  { hangul:'폭포', roman:'pokpo', meaning:'waterfall', emoji:'🌊', example:'폭포 소리가 커요. — The waterfall is loud.' },
+  { hangul:'무지개', roman:'mujigae', meaning:'rainbow', emoji:'🌈', example:'무지개가 예뻐요. — The rainbow is pretty.' },
+  { hangul:'파도', roman:'pado', meaning:'wave', emoji:'🌊', example:'파도가 높아요. — The waves are high.' },
+  { hangul:'나비', roman:'nabi', meaning:'butterfly', emoji:'🦋', example:'나비가 날아다녀요. — The butterfly flutters around.' },
+  { hangul:'나뭇잎', roman:'namunnip', meaning:'leaf', emoji:'🍃', example:'나뭇잎이 떨어져요. — The leaves are falling.' },
+  { hangul:'씨앗', roman:'ssiat', meaning:'seed', emoji:'🌱', example:'씨앗을 심었어요. — I planted a seed.' },
+  { hangul:'동굴', roman:'donggul', meaning:'cave', emoji:'🕳️', example:'동굴이 어두워요. — The cave is dark.' },
+  { hangul:'해변', roman:'haebyeon', meaning:'beach', emoji:'🏝️', example:'해변이 아름다워요. — The beach is beautiful.' },
+  { hangul:'일출', roman:'ilchul', meaning:'sunrise', emoji:'🌅', example:'일출이 멋있어요. — The sunrise is magnificent.' },
+  { hangul:'노을', roman:'noeul', meaning:'sunset glow', emoji:'🌇', example:'노을이 붉어요. — The sunset glow is red.' },
+  { hangul:'안개', roman:'angae', meaning:'fog / mist', emoji:'🌫️', example:'안개가 자욱해요. — The fog is thick.' },
+  { hangul:'이슬', roman:'isul', meaning:'dew', emoji:'💦', example:'이슬이 맺혀 있어요. — Dew has formed.' },
+  { hangul:'계곡', roman:'gyegok', meaning:'valley / gorge', emoji:'🏔️', example:'계곡물이 차가워요. — The valley stream is cold.' },
+  { hangul:'절벽', roman:'jeolbyeok', meaning:'cliff', emoji:'⛰️', example:'절벽이 높아요. — The cliff is high.' },
+  { hangul:'흙', roman:'heuk', meaning:'soil / earth', emoji:'🟤', example:'흙이 촉촉해요. — The soil is moist.' },
+  { hangul:'들판', roman:'deulpan', meaning:'field / plain', emoji:'🌾', example:'들판이 넓어요. — The field is wide.' },
+  { hangul:'하천', roman:'hacheon', meaning:'stream / creek', emoji:'🏞️', example:'하천이 맑아요. — The stream is clear.' },
+  { hangul:'소나기', roman:'sonagi', meaning:'rain shower', emoji:'🌦️', example:'소나기가 내려요. — A rain shower is falling.' },
+  { hangul:'천둥', roman:'cheondung', meaning:'thunder', emoji:'⛈️', example:'천둥 소리가 무서워요. — The sound of thunder is scary.' },
+  { hangul:'번개', roman:'beongae', meaning:'lightning', emoji:'⚡', example:'번개가 쳤어요. — Lightning struck.' },
+  { hangul:'서리', roman:'seori', meaning:'frost', emoji:'🥶', example:'서리가 내렸어요. — Frost has fallen.' },
+  { hangul:'봄', roman:'bom', meaning:'spring (season)', emoji:'🌷', example:'봄이 왔어요. — Spring has come.' },
+  { hangul:'여름', roman:'yeoreum', meaning:'summer', emoji:'☀️', example:'여름은 더워요. — Summer is hot.' },
+  { hangul:'가을', roman:'gaeul', meaning:'autumn', emoji:'🍁', example:'가을 하늘이 높아요. — The autumn sky is high.' },
+  { hangul:'겨울', roman:'gyeoul', meaning:'winter', emoji:'⛄', example:'겨울은 추워요. — Winter is cold.' },
+  { hangul:'지평선', roman:'jihyeongseon', meaning:'horizon', emoji:'🌄', example:'지평선이 보여요. — I can see the horizon.' },
+  { hangul:'반딧불', roman:'banditbul', meaning:'firefly', emoji:'✨', example:'반딧불이 빛나요. — The firefly glows.' },
+  { hangul:'연못', roman:'yeonmot', meaning:'pond', emoji:'🪷', example:'연못에 연꽃이 있어요. — There are lotus flowers in the pond.' },
+  { hangul:'오솔길', roman:'osolgil', meaning:'narrow trail', emoji:'🌿', example:'오솔길을 걸어요. — I walk along the trail.' },
+  { hangul:'모닥불', roman:'modakbul', meaning:'campfire', emoji:'🔥', example:'모닥불이 따뜻해요. — The campfire is warm.' },
+  { hangul:'이슬비', roman:'isulbi', meaning:'drizzle', emoji:'🌂', example:'이슬비가 내려요. — A drizzle is falling.' },
+  { hangul:'냇물', roman:'naenmul', meaning:'brook', emoji:'💧', example:'냇물이 흘러요. — The brook flows.' },
+  { hangul:'노루', roman:'noru', meaning:'roe deer', emoji:'🦌', example:'노루가 뛰어요. — The deer is leaping.' },
+  { hangul:'여우', roman:'yeou', meaning:'fox', emoji:'🦊', example:'여우가 있어요. — There is a fox.' },
+];
+
+function renderWotd() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now - start) / 864e5);
+  const word = NATURE_WORDS[dayOfYear % NATURE_WORDS.length];
+  document.getElementById('wotdEmoji').textContent = word.emoji;
+  document.getElementById('wotdHangul').textContent = word.hangul;
+  document.getElementById('wotdRoman').textContent = word.roman;
+  document.getElementById('wotdMeaning').textContent = word.meaning;
+  document.getElementById('wotdExample').innerHTML = word.example;
+  document.getElementById('wotdDate').textContent = now.toLocaleDateString('en', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+renderWotd();
+
 /* Charts */
 let chartWeekInst = null, chartSourceInst = null, chartCumInst = null;
 
@@ -520,7 +581,6 @@ function renderAll() {
   document.getElementById('sTotalHrs').innerHTML = Math.floor(tm/60) + '<span>h</span>';
   document.getElementById('sXP').textContent = xp;
 
-  /* XP bar */
   const lvIdx = currentLevel(xp);
   const lv = LEVELS[lvIdx];
   const nextLv = LEVELS[Math.min(lvIdx+1, LEVELS.length-1)];
@@ -529,7 +589,6 @@ function renderAll() {
   document.getElementById('xpPtsLabel').textContent = xp + ' / ' + nextLv.xp + ' XP';
   document.getElementById('xpFill').style.width = pct + '%';
 
-  /* Badges */
   const earned = loadBadges();
   const row = document.getElementById('badgesRow'); row.innerHTML = '';
   BADGES.forEach(b => {
@@ -542,7 +601,6 @@ function renderAll() {
   });
   saveBadges(earned);
 
-  /* Streak grid */
   const grid = document.getElementById('streakGrid'); grid.innerHTML = '';
   for (let i = 29; i >= 0; i--) {
     const dt = new Date(); dt.setDate(dt.getDate() - i);
@@ -554,7 +612,6 @@ function renderAll() {
     grid.appendChild(dot);
   }
 
-  /* Weekly bar chart */
   const days = [], labels = [];
   for (let i = 6; i >= 0; i--) {
     const dt = new Date(); dt.setDate(dt.getDate() - i);
@@ -565,36 +622,18 @@ function renderAll() {
   if (chartWeekInst) chartWeekInst.destroy();
   chartWeekInst = new Chart(document.getElementById('chartWeek'), {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{ data: days, backgroundColor: days.map((_,i) => i===6 ? '#c9614a' : '#e8d5cf'), borderRadius: 3, borderSkipped: false }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: '#b0aaa4', font: { size: 11 } } },
-        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 } }, beginAtZero: true }
-      }
-    }
+    data: { labels, datasets: [{ data: days, backgroundColor: days.map((_,i) => i===6 ? '#c9614a' : '#e8d5cf'), borderRadius: 3, borderSkipped: false }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#b0aaa4', font: { size: 11 } } }, y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 } }, beginAtZero: true } } }
   });
 
-  /* Donut chart */
   const st = sourceTotals(data);
-  const srcLabels = SOURCES.map(s => s.name);
-  const srcVals   = SOURCES.map(s => st[s.id]);
-  const srcColors = SOURCES.map(s => s.color);
   if (chartSourceInst) chartSourceInst.destroy();
   chartSourceInst = new Chart(document.getElementById('chartSource'), {
     type: 'doughnut',
-    data: { labels: srcLabels, datasets: [{ data: srcVals, backgroundColor: srcColors, borderWidth: 0, hoverOffset: 4 }] },
-    options: {
-      responsive: true, maintainAspectRatio: false, cutout: '65%',
-      plugins: { legend: { display: false } }
-    }
+    data: { labels: SOURCES.map(s => s.name), datasets: [{ data: SOURCES.map(s => st[s.id]), backgroundColor: SOURCES.map(s => s.color), borderWidth: 0, hoverOffset: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false } } }
   });
 
-  /* Cumulative line chart */
   const cumDays = [], cumLabels = []; let cum = 0;
   for (let i = 59; i >= 0; i--) {
     const dt = new Date(); dt.setDate(dt.getDate() - i);
@@ -606,35 +645,20 @@ function renderAll() {
   if (chartCumInst) chartCumInst.destroy();
   chartCumInst = new Chart(document.getElementById('chartCum'), {
     type: 'line',
-    data: {
-      labels: cumLabels,
-      datasets: [
-        { data: cumDays, borderColor: '#c9614a', borderWidth: 2, pointRadius: 0, tension: .4, fill: true, backgroundColor: 'rgba(201,97,74,0.07)' },
-        { data: cumLabels.map(() => GOAL_HRS), borderColor: '#e8d5cf', borderWidth: 1, borderDash: [4,4], pointRadius: 0 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: '#b0aaa4', font: { size: 10 }, maxRotation: 0 } },
-        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 } }, beginAtZero: true, max: GOAL_HRS }
-      }
-    }
+    data: { labels: cumLabels, datasets: [
+      { data: cumDays, borderColor: '#c9614a', borderWidth: 2, pointRadius: 0, tension: .4, fill: true, backgroundColor: 'rgba(201,97,74,0.07)' },
+      { data: cumLabels.map(() => GOAL_HRS), borderColor: '#e8d5cf', borderWidth: 1, borderDash: [4,4], pointRadius: 0 }
+    ]},
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { grid: { display: false }, ticks: { color: '#b0aaa4', font: { size: 10 }, maxRotation: 0 } }, y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 } }, beginAtZero: true, max: GOAL_HRS } } }
   });
 
-  /* Source breakdown */
   const logDiv = document.getElementById('sourceLog'); logDiv.innerHTML = '';
   const mx = Math.max(...Object.values(st), 1);
   SOURCES.forEach(s => {
-    const row = document.createElement('div'); row.className = 'src-row';
+    const r = document.createElement('div'); r.className = 'src-row';
     const pct = Math.round(st[s.id] / mx * 100);
-    row.innerHTML = `
-      <span class="src-dot" style="background:${s.color}"></span>
-      <span class="src-name">${s.name}</span>
-      <div class="src-bar-track"><div class="src-bar-fill" style="width:${pct}%;background:${s.color}"></div></div>
-      <span class="src-mins">${st[s.id]}m</span>`;
-    logDiv.appendChild(row);
+    r.innerHTML = `<span class="src-dot" style="background:${s.color}"></span><span class="src-name">${s.name}</span><div class="src-bar-track"><div class="src-bar-fill" style="width:${pct}%;background:${s.color}"></div></div><span class="src-mins">${st[s.id]}m</span>`;
+    logDiv.appendChild(r);
   });
 }
 
