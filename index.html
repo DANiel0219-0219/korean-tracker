@@ -259,20 +259,20 @@
     min-width: 70px;
     text-align: center;
   }
-  .mt-adj { display: flex; gap: 6px; }
+  .mt-adj { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
   .mt-btn {
-    width: 36px; height: 36px;
+    width: 34px; height: 34px;
     border-radius: 50%;
     border: 0.5px solid rgba(0,0,0,0.12);
     background: var(--surface);
     color: var(--ink);
-    font-size: 20px;
+    font-size: 11px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     font-family: var(--font-body);
     transition: background .12s, transform .1s;
     line-height: 1;
-    font-weight: 300;
+    font-weight: 500;
   }
   .mt-btn:hover { background: var(--warm); }
   .mt-btn:active { transform: scale(0.93); }
@@ -318,6 +318,41 @@
     border-left: 2px solid var(--rose-lt); padding-left: 10px;
   }
   .wotd-date { font-size: 11px; color: var(--ink3); margin-top: 12px; letter-spacing: .04em; }
+
+  /* XP milestone rows */
+  .xp-milestone {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+  }
+  .xp-milestone.reached { background: var(--rose-lt); }
+  .xp-milestone-icon { font-size: 16px; flex-shrink: 0; }
+  .xp-milestone-info { flex: 1; }
+  .xp-milestone-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .xp-milestone-sub { font-size: 11px; color: var(--ink2); margin-top: 1px; }
+  .xp-milestone-pts { font-size: 12px; font-weight: 500; color: var(--ink2); flex-shrink: 0; }
+  .xp-milestone.reached .xp-milestone-pts { color: var(--rose-dk); }
+
+  /* Today breakdown rows */
+  .bd-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid rgba(0,0,0,0.05);
+  }
+  .bd-row:last-child { border-bottom: none; }
+  .bd-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .bd-name { font-size: 13px; color: var(--ink); flex: 1; }
+  .bd-bar-track { width: 80px; height: 4px; background: var(--surface); border-radius: 2px; overflow: hidden; }
+  .bd-bar-fill { height: 100%; border-radius: 2px; }
+  .bd-mins { font-size: 12px; color: var(--ink2); min-width: 40px; text-align: right; }
+  .bd-total { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; margin-top: 6px; border-top: 0.5px solid rgba(0,0,0,0.08); }
+  .bd-total-lbl { font-size: 12px; color: var(--ink2); }
+  .bd-total-val { font-family: var(--font-disp); font-size: 18px; color: var(--ink); }
 
   /* Source log */
   .source-log-card {
@@ -448,8 +483,10 @@
         <div class="mt-label">minutes</div>
         <div class="mt-val" id="mtMins">00</div>
         <div class="mt-adj">
-          <button class="mt-btn" onclick="mtAdj('mins',-1)" aria-label="Subtract one minute">−</button>
-          <button class="mt-btn" onclick="mtAdj('mins',1)" aria-label="Add one minute">+</button>
+          <button class="mt-btn" onclick="mtAdj('mins',-5)" title="−5 min" style="font-size:11px">−5</button>
+          <button class="mt-btn" onclick="mtAdj('mins',-1)" title="−1 min" style="font-size:11px">−1</button>
+          <button class="mt-btn" onclick="mtAdj('mins',1)" title="+1 min" style="font-size:11px">+1</button>
+          <button class="mt-btn" onclick="mtAdj('mins',5)" title="+5 min" style="font-size:11px">+5</button>
         </div>
       </div>
       <div class="mt-divider">:</div>
@@ -475,6 +512,19 @@
     <div class="wotd-meaning" id="wotdMeaning"></div>
     <div class="wotd-example" id="wotdExample"></div>
     <div class="wotd-date" id="wotdDate"></div>
+  </div>
+
+  <div class="section-label">today's breakdown</div>
+  <div class="card" id="todayBreakdown" style="padding:14px 18px">
+    <div style="font-size:12px;color:var(--ink3);text-align:center;padding:8px 0" id="breakdownEmpty">No sessions logged today yet.</div>
+  </div>
+
+  <div class="section-label">xp guide</div>
+  <div class="card" style="padding:16px 18px;margin-bottom:1.5rem">
+    <div style="font-size:13px;color:var(--ink2);margin-bottom:12px;line-height:1.55">
+      You earn <strong style="color:var(--ink)">2 XP per minute</strong> studied. Every minute counts — XP is a direct reflection of time invested.
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px" id="xpMilestones"></div>
   </div>
 
   <div class="section-label">achievements</div>
@@ -828,23 +878,71 @@ function renderAll() {
     cumLabels.push(i % 10 === 0 ? dt.toLocaleDateString('en', { month:'short', day:'numeric' }) : '');
   }
   if (chartCumInst) chartCumInst.destroy();
+  const cumMax = Math.max(...cumDays, 5); // dynamic, at least 5h so chart isn't flat
   chartCumInst = new Chart(document.getElementById('chartCum'), {
     type: 'line',
     data: {
       labels: cumLabels,
       datasets: [
-        { data: cumDays, borderColor: '#c9614a', borderWidth: 2, pointRadius: 0, tension: .4, fill: true, backgroundColor: 'rgba(201,97,74,0.07)' },
-        { data: cumLabels.map(() => GOAL_HRS), borderColor: '#e8d5cf', borderWidth: 1, borderDash: [4,4], pointRadius: 0 }
+        { data: cumDays, borderColor: '#c9614a', borderWidth: 2, pointRadius: 0, tension: .4, fill: true, backgroundColor: 'rgba(201,97,74,0.07)', label: 'Hours studied' },
+        { data: cumLabels.map(() => 80), borderColor: '#2a7a6a', borderWidth: 1, borderDash: [4,4], pointRadius: 0, label: 'Grade 1 goal (80h)' },
+        { data: cumLabels.map(() => GOAL_HRS), borderColor: '#e8d5cf', borderWidth: 1, borderDash: [4,4], pointRadius: 0, label: 'Grade 2 goal (120h)' }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#b0aaa4', padding: 10 } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label ? ` ${ctx.parsed.y.toFixed(1)}h` : '' } }
+      },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#b0aaa4', font: { size: 10 }, maxRotation: 0 } },
-        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 } }, beginAtZero: true, max: GOAL_HRS }
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 }, callback: v => v + 'h' }, beginAtZero: true, max: Math.ceil(Math.max(cumMax, GOAL_HRS) / 10) * 10 }
       }
     }
+  });
+
+  /* Today's breakdown */
+  const todayData = data[todayKey()] || {};
+  const bdDiv = document.getElementById('todayBreakdown');
+  const bdEmpty = document.getElementById('breakdownEmpty');
+  const activeSources = SOURCES.filter(s => todayData[s.id] > 0);
+  if (activeSources.length === 0) {
+    bdEmpty.style.display = 'block';
+    const existingRows = bdDiv.querySelectorAll('.bd-row, .bd-total');
+    existingRows.forEach(r => r.remove());
+  } else {
+    bdEmpty.style.display = 'none';
+    const existingRows = bdDiv.querySelectorAll('.bd-row, .bd-total');
+    existingRows.forEach(r => r.remove());
+    const dayMx = Math.max(...activeSources.map(s => todayData[s.id]));
+    activeSources.forEach(s => {
+      const r = document.createElement('div'); r.className = 'bd-row';
+      const pct = Math.round(todayData[s.id] / dayMx * 100);
+      r.innerHTML = `<span class="bd-dot" style="background:${s.color}"></span><span class="bd-name">${s.name}</span><div class="bd-bar-track"><div class="bd-bar-fill" style="width:${pct}%;background:${s.color}"></div></div><span class="bd-mins">${todayData[s.id]}m</span>`;
+      bdDiv.appendChild(r);
+    });
+    const tot = document.createElement('div'); tot.className = 'bd-total';
+    const totalTodayMins = activeSources.reduce((a,s) => a + todayData[s.id], 0);
+    const hrs = Math.floor(totalTodayMins/60), mins2 = totalTodayMins%60;
+    tot.innerHTML = `<span class="bd-total-lbl">total today</span><span class="bd-total-val">${hrs > 0 ? hrs+'h ' : ''}${mins2}m</span>`;
+    bdDiv.appendChild(tot);
+  }
+
+  /* XP milestones */
+  const XP_MILESTONES = [
+    { icon:'🌱', name:'Getting started', sub:'First 30 min — build the habit', xp: 60 },
+    { icon:'📖', name:'Hangul mastered', sub:'~5 hours of focused study', xp: 600 },
+    { icon:'🎯', name:'TOPIK I Grade 1', sub:'80 hours — your first target', xp: 9600 },
+    { icon:'🏆', name:'TOPIK I Grade 2', sub:'120 hours — exam-ready', xp: 14400 },
+  ];
+  const msDiv = document.getElementById('xpMilestones'); msDiv.innerHTML = '';
+  XP_MILESTONES.forEach(m => {
+    const reached = xp >= m.xp;
+    const div = document.createElement('div');
+    div.className = 'xp-milestone' + (reached ? ' reached' : '');
+    div.innerHTML = `<span class="xp-milestone-icon">${reached ? '✅' : m.icon}</span><div class="xp-milestone-info"><div class="xp-milestone-name">${m.name}</div><div class="xp-milestone-sub">${m.sub}</div></div><span class="xp-milestone-pts">${m.xp.toLocaleString()} XP</span>`;
+    msDiv.appendChild(div);
   });
 
   /* Source breakdown */
