@@ -403,6 +403,80 @@
     .chart-card.full { grid-column: 1; }
     .sw-display { font-size: 40px; }
   }
+  /* Vocab quiz popup */
+  .quiz-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,24,22,0.45);
+    backdrop-filter: blur(3px);
+    z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s;
+  }
+  .quiz-overlay.open { opacity: 1; pointer-events: all; }
+  .quiz-modal {
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 24px 22px 20px;
+    width: min(440px, calc(100vw - 2rem));
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+    position: relative;
+  }
+  .quiz-close {
+    position: absolute; top: 14px; right: 16px;
+    background: none; border: none; font-size: 18px;
+    color: var(--ink3); cursor: pointer; line-height: 1;
+  }
+  .quiz-close:hover { color: var(--ink); }
+  .quiz-header { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink2); font-weight: 500; margin-bottom: 16px; }
+  .quiz-card {
+    background: var(--card-bg);
+    border: 0.5px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .quiz-hangul { font-family: var(--font-disp); font-size: 40px; color: var(--ink); line-height: 1; margin-bottom: 6px; }
+  .quiz-roman { font-size: 13px; color: var(--ink2); font-style: italic; margin-bottom: 14px; }
+  .quiz-answer {
+    font-size: 16px; font-weight: 500; color: var(--rose);
+    min-height: 24px; transition: opacity .2s;
+  }
+  .quiz-answer.hidden { opacity: 0; }
+  .quiz-reveal {
+    background: var(--surface); border: 0.5px solid var(--card-border);
+    border-radius: var(--radius-md); padding: 8px 16px;
+    font-size: 13px; cursor: pointer; font-family: var(--font-body);
+    color: var(--ink); transition: background .12s;
+    margin-bottom: 14px; width: 100%;
+  }
+  .quiz-reveal:hover { background: var(--warm); }
+  .quiz-example { font-size: 12px; color: var(--ink2); line-height: 1.5; border-left: 2px solid var(--rose-lt); padding-left: 10px; text-align: left; margin-bottom: 16px; min-height: 36px; opacity: 0; transition: opacity .2s; }
+  .quiz-example.show { opacity: 1; }
+  .quiz-nav { display: flex; gap: 8px; }
+  .quiz-nav-btn {
+    flex: 1; padding: 10px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 0.5px solid rgba(0,0,0,0.12);
+    background: var(--surface); color: var(--ink);
+    font-family: var(--font-body); transition: background .12s, transform .1s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .quiz-nav-btn:hover { background: var(--warm); }
+  .quiz-nav-btn:active { transform: scale(0.97); }
+  .quiz-nav-btn.primary { background: var(--rose); color: #fff; border-color: var(--rose); }
+  .quiz-nav-btn.primary:hover { opacity: .88; }
+  .quiz-counter { text-align: center; font-size: 11px; color: var(--ink3); margin-top: 10px; }
+  .quiz-trigger-btn {
+    width: 100%; padding: 11px; border-radius: var(--radius-md);
+    font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 0.5px solid var(--rose); background: var(--rose-lt);
+    color: var(--rose-dk); font-family: var(--font-body);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    transition: background .12s; margin-bottom: 1.5rem;
+  }
+  .quiz-trigger-btn:hover { background: #eedad4; }
 </style>
 </head>
 <body>
@@ -558,7 +632,34 @@
   <div class="section-label">by source</div>
   <div class="source-log-card" id="sourceLog"></div>
 
+  <div class="section-label">vocab quiz</div>
+  <button class="quiz-trigger-btn" onclick="openQuiz()">
+    <i class="ti ti-cards"></i> start today's vocab quiz
+  </button>
+
 </div>
+
+<div class="quiz-overlay" id="quizOverlay">
+  <div class="quiz-modal">
+    <button class="quiz-close" onclick="closeQuiz()">✕</button>
+    <div class="quiz-header">vocab quiz — <span id="quizSetLabel"></span></div>
+    <div class="quiz-card">
+      <div class="quiz-hangul" id="qHangul"></div>
+      <div class="quiz-roman" id="qRoman"></div>
+      <div class="quiz-answer hidden" id="qAnswer"></div>
+    </div>
+    <button class="quiz-reveal" id="qRevealBtn" onclick="revealAnswer()">
+      <i class="ti ti-eye"></i> reveal answer
+    </button>
+    <div class="quiz-example" id="qExample"></div>
+    <div class="quiz-nav">
+      <button class="quiz-nav-btn" onclick="prevWord()"><i class="ti ti-arrow-left"></i> prev</button>
+      <button class="quiz-nav-btn primary" onclick="nextWord()">next <i class="ti ti-arrow-right"></i></button>
+    </div>
+    <div class="quiz-counter" id="qCounter"></div>
+  </div>
+</div>
+
 
 <div class="toast-wrap"><div class="toast" id="toast"></div></div>
 
@@ -878,26 +979,32 @@ function renderAll() {
     cumLabels.push(i % 10 === 0 ? dt.toLocaleDateString('en', { month:'short', day:'numeric' }) : '');
   }
   if (chartCumInst) chartCumInst.destroy();
-  const cumMax = Math.max(...cumDays, 5); // dynamic, at least 5h so chart isn't flat
+  const cumMax = Math.max(...cumDays, 1); // scale to actual hours, minimum 1h so axis isn't flat
+  const yMax = Math.ceil((cumMax * 1.2) / 5) * 5; // 20% headroom, rounded to nearest 5h
+  // show goal lines only if within reasonable range of current progress
+  const show80 = true;
+  const show120 = yMax >= 40;
+  const goalDatasets = [];
+  if (show80) goalDatasets.push({ data: cumLabels.map(() => 80), borderColor: '#2a7a6a', borderWidth: 1, borderDash: [4,4], pointRadius: 0, label: 'Grade 1 (80h)' });
+  if (show120) goalDatasets.push({ data: cumLabels.map(() => GOAL_HRS), borderColor: '#e8d5cf', borderWidth: 1, borderDash: [4,4], pointRadius: 0, label: 'Grade 2 (120h)' });
   chartCumInst = new Chart(document.getElementById('chartCum'), {
     type: 'line',
     data: {
       labels: cumLabels,
       datasets: [
         { data: cumDays, borderColor: '#c9614a', borderWidth: 2, pointRadius: 0, tension: .4, fill: true, backgroundColor: 'rgba(201,97,74,0.07)', label: 'Hours studied' },
-        { data: cumLabels.map(() => 80), borderColor: '#2a7a6a', borderWidth: 1, borderDash: [4,4], pointRadius: 0, label: 'Grade 1 goal (80h)' },
-        { data: cumLabels.map(() => GOAL_HRS), borderColor: '#e8d5cf', borderWidth: 1, borderDash: [4,4], pointRadius: 0, label: 'Grade 2 goal (120h)' }
+        ...goalDatasets
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
         legend: { display: true, position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: '#b0aaa4', padding: 10 } },
-        tooltip: { callbacks: { label: ctx => ctx.dataset.label ? ` ${ctx.parsed.y.toFixed(1)}h` : '' } }
+        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y.toFixed(1)}h` } }
       },
       scales: {
         x: { grid: { display: false }, ticks: { color: '#b0aaa4', font: { size: 10 }, maxRotation: 0 } },
-        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 }, callback: v => v + 'h' }, beginAtZero: true, max: Math.ceil(Math.max(cumMax, GOAL_HRS) / 10) * 10 }
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#b0aaa4', font: { size: 11 }, callback: v => v + 'h' }, beginAtZero: true, max: yMax }
       }
     }
   });
@@ -958,9 +1065,158 @@ function renderAll() {
       <span class="src-mins">${st[s.id]}m</span>`;
     logDiv.appendChild(row);
   });
+/* ── Vocab Quiz ─────────────────────────────────────── */
+const TOPIK_VOCAB = [
+  { h:'가다', r:'gada', e:'to go', ex:'학교에 가요. — I go to school.' },
+  { h:'오다', r:'oda', e:'to come', ex:'친구가 와요. — My friend comes.' },
+  { h:'먹다', r:'meokda', e:'to eat', ex:'밥을 먹어요. — I eat rice.' },
+  { h:'마시다', r:'masida', e:'to drink', ex:'물을 마셔요. — I drink water.' },
+  { h:'자다', r:'jada', e:'to sleep', ex:'일찍 자요. — I sleep early.' },
+  { h:'보다', r:'boda', e:'to see / watch', ex:'영화를 봐요. — I watch a movie.' },
+  { h:'듣다', r:'deutda', e:'to listen', ex:'음악을 들어요. — I listen to music.' },
+  { h:'읽다', r:'ikda', e:'to read', ex:'책을 읽어요. — I read a book.' },
+  { h:'쓰다', r:'sseuda', e:'to write / use', ex:'편지를 써요. — I write a letter.' },
+  { h:'말하다', r:'malhada', e:'to speak', ex:'한국어로 말해요. — I speak in Korean.' },
+  { h:'공부하다', r:'gongbu-hada', e:'to study', ex:'매일 공부해요. — I study every day.' },
+  { h:'일하다', r:'il-hada', e:'to work', ex:'회사에서 일해요. — I work at a company.' },
+  { h:'운동하다', r:'undong-hada', e:'to exercise', ex:'아침에 운동해요. — I exercise in the morning.' },
+  { h:'만나다', r:'mannada', e:'to meet', ex:'친구를 만나요. — I meet a friend.' },
+  { h:'사다', r:'sada', e:'to buy', ex:'옷을 사요. — I buy clothes.' },
+  { h:'주다', r:'juda', e:'to give', ex:'선물을 줘요. — I give a gift.' },
+  { h:'받다', r:'batda', e:'to receive', ex:'선물을 받아요. — I receive a gift.' },
+  { h:'앉다', r:'anda', e:'to sit', ex:'의자에 앉아요. — I sit on a chair.' },
+  { h:'서다', r:'seoda', e:'to stand', ex:'여기 서세요. — Please stand here.' },
+  { h:'학교', r:'hakgyo', e:'school', ex:'학교에 가요. — I go to school.' },
+  { h:'병원', r:'byeongwon', e:'hospital', ex:'병원에 가요. — I go to the hospital.' },
+  { h:'약국', r:'yakguk', e:'pharmacy', ex:'약국에서 약을 사요. — I buy medicine at the pharmacy.' },
+  { h:'도서관', r:'doseogwan', e:'library', ex:'도서관에서 공부해요. — I study at the library.' },
+  { h:'식당', r:'sikdang', e:'restaurant', ex:'식당에서 먹어요. — I eat at a restaurant.' },
+  { h:'공원', r:'gongwon', e:'park', ex:'공원에서 운동해요. — I exercise in the park.' },
+  { h:'시장', r:'sijang', e:'market', ex:'시장에서 야채를 사요. — I buy vegetables at the market.' },
+  { h:'지하철', r:'jihacheol', e:'subway', ex:'지하철을 타요. — I take the subway.' },
+  { h:'공항', r:'gonghang', e:'airport', ex:'공항에 가요. — I go to the airport.' },
+  { h:'가족', r:'gajok', e:'family', ex:'가족이 많아요. — I have a big family.' },
+  { h:'친구', r:'chingu', e:'friend', ex:'친구가 있어요. — I have a friend.' },
+  { h:'선생님', r:'seonsaengnim', e:'teacher', ex:'선생님이 좋아요. — I like the teacher.' },
+  { h:'학생', r:'haksaeng', e:'student', ex:'저는 학생이에요. — I am a student.' },
+  { h:'크다', r:'keuda', e:'big / large', ex:'집이 커요. — The house is big.' },
+  { h:'작다', r:'jakda', e:'small', ex:'방이 작아요. — The room is small.' },
+  { h:'많다', r:'manta', e:'many / much', ex:'사람이 많아요. — There are many people.' },
+  { h:'좋다', r:'jota', e:'good', ex:'날씨가 좋아요. — The weather is good.' },
+  { h:'나쁘다', r:'napeuda', e:'bad', ex:'기분이 나빠요. — I feel bad.' },
+  { h:'빠르다', r:'ppareuda', e:'fast', ex:'기차가 빨라요. — The train is fast.' },
+  { h:'느리다', r:'neurida', e:'slow', ex:'버스가 느려요. — The bus is slow.' },
+  { h:'싸다', r:'ssada', e:'cheap', ex:'이게 싸요. — This is cheap.' },
+  { h:'비싸다', r:'bissada', e:'expensive', ex:'이게 비싸요. — This is expensive.' },
+  { h:'맛있다', r:'masitda', e:'delicious', ex:'김치가 맛있어요. — Kimchi is delicious.' },
+  { h:'쉽다', r:'swipda', e:'easy', ex:'한글이 쉬워요. — Hangul is easy.' },
+  { h:'어렵다', r:'oryeopda', e:'difficult', ex:'시험이 어려워요. — The exam is difficult.' },
+  { h:'재미있다', r:'jaemi-itda', e:'interesting / fun', ex:'한국어가 재미있어요. — Korean is fun.' },
+  { h:'오늘', r:'oneul', e:'today', ex:'오늘 바빠요. — I am busy today.' },
+  { h:'내일', r:'naeil', e:'tomorrow', ex:'내일 만나요. — Let\'s meet tomorrow.' },
+  { h:'어제', r:'eoje', e:'yesterday', ex:'어제 공부했어요. — I studied yesterday.' },
+  { h:'지금', r:'jigeum', e:'now', ex:'지금 가요. — I am going now.' },
+  { h:'아침', r:'achim', e:'morning / breakfast', ex:'아침에 일어나요. — I wake up in the morning.' },
+  { h:'점심', r:'jeomsim', e:'lunch / noon', ex:'점심을 먹어요. — I eat lunch.' },
+  { h:'저녁', r:'jeonyeok', e:'evening / dinner', ex:'저녁을 먹어요. — I eat dinner.' },
+  { h:'날씨', r:'nalsi', e:'weather', ex:'날씨가 좋아요. — The weather is good.' },
+  { h:'비', r:'bi', e:'rain', ex:'비가 와요. — It is raining.' },
+  { h:'바람', r:'baram', e:'wind', ex:'바람이 불어요. — The wind blows.' },
+  { h:'하늘', r:'haneul', e:'sky', ex:'하늘이 파래요. — The sky is blue.' },
+  { h:'밥', r:'bap', e:'rice / meal', ex:'밥을 먹어요. — I eat rice.' },
+  { h:'물', r:'mul', e:'water', ex:'물을 마셔요. — I drink water.' },
+  { h:'김치', r:'kimchi', e:'kimchi', ex:'김치가 맛있어요. — Kimchi is delicious.' },
+  { h:'과일', r:'gwail', e:'fruit', ex:'과일을 좋아해요. — I like fruit.' },
+  { h:'야채', r:'yachae', e:'vegetable', ex:'야채를 먹어요. — I eat vegetables.' },
+  { h:'가격', r:'gagyeok', e:'price', ex:'가격이 얼마예요? — How much is the price?' },
+  { h:'시간', r:'sigan', e:'time', ex:'시간이 없어요. — I have no time.' },
+  { h:'이름', r:'ireum', e:'name', ex:'이름이 뭐예요? — What is your name?' },
+  { h:'전화', r:'jeonhwa', e:'telephone', ex:'전화해요. — I call on the phone.' },
+  { h:'약속', r:'yaksok', e:'appointment / promise', ex:'약속이 있어요. — I have an appointment.' },
+  { h:'여행', r:'yeohaeng', e:'travel', ex:'여행을 가요. — I go traveling.' },
+  { h:'음식', r:'eumsik', e:'food', ex:'음식이 맛있어요. — The food is delicious.' },
+  { h:'음악', r:'eumak', e:'music', ex:'음악을 들어요. — I listen to music.' },
+  { h:'날', r:'nal', e:'day', ex:'좋은 날이에요. — It is a good day.' },
+  { h:'돈', r:'don', e:'money', ex:'돈이 없어요. — I have no money.' },
+  { h:'일', r:'il', e:'work / day / number 1', ex:'일이 많아요. — There is a lot of work.' },
+  { h:'집', r:'jip', e:'house / home', ex:'집에 가요. — I go home.' },
+  { h:'방', r:'bang', e:'room', ex:'방이 깨끗해요. — The room is clean.' },
+  { h:'길', r:'gil', e:'road / way', ex:'길이 멀어요. — The road is far.' },
+  { h:'나라', r:'nara', e:'country', ex:'어느 나라 사람이에요? — Which country are you from?' },
+  { h:'문화', r:'munhwa', e:'culture', ex:'한국 문화가 좋아요. — I like Korean culture.' },
+  { h:'건강', r:'geongang', e:'health', ex:'건강이 중요해요. — Health is important.' },
+  { h:'행복', r:'haengbok', e:'happiness', ex:'행복해요. — I am happy.' },
+  { h:'사랑', r:'sarang', e:'love', ex:'사랑해요. — I love you.' },
+  { h:'감사하다', r:'gamsahada', e:'to thank / be grateful', ex:'감사합니다. — Thank you.' },
+  { h:'미안하다', r:'mianhada', e:'to be sorry', ex:'미안해요. — I am sorry.' },
+  { h:'괜찮다', r:'gwaenchanta', e:'to be okay / fine', ex:'괜찮아요. — It is okay.' },
+  { h:'기다리다', r:'gidarida', e:'to wait', ex:'조금만 기다려요. — Please wait a moment.' },
+  { h:'시작하다', r:'sijak-hada', e:'to start / begin', ex:'수업을 시작해요. — The class begins.' },
+  { h:'끝나다', r:'kkeunnada', e:'to finish / end', ex:'수업이 끝났어요. — The class is over.' },
+  { h:'도착하다', r:'dochak-hada', e:'to arrive', ex:'서울에 도착했어요. — I arrived in Seoul.' },
+  { h:'출발하다', r:'chulbal-hada', e:'to depart / leave', ex:'9시에 출발해요. — We depart at 9.' },
+  { h:'준비하다', r:'junbi-hada', e:'to prepare', ex:'시험을 준비해요. — I prepare for the exam.' },
+  { h:'선물', r:'seonmul', e:'gift / present', ex:'선물을 받았어요. — I received a gift.' },
+  { h:'생일', r:'saengil', e:'birthday', ex:'생일 축하해요! — Happy birthday!' },
+  { h:'가방', r:'gabang', e:'bag', ex:'가방이 무거워요. — The bag is heavy.' },
+  { h:'옷', r:'ot', e:'clothes', ex:'옷을 입어요. — I put on clothes.' },
+  { h:'신발', r:'sinbal', e:'shoes', ex:'신발을 신어요. — I put on shoes.' },
+  { h:'책', r:'chaek', e:'book', ex:'책을 읽어요. — I read a book.' },
+  { h:'컴퓨터', r:'keompyuteo', e:'computer', ex:'컴퓨터를 사용해요. — I use a computer.' },
+  { h:'핸드폰', r:'haendeupon', e:'cell phone', ex:'핸드폰이 있어요. — I have a cell phone.' },
+];
+
+function getDailyWords() {
+  const now = new Date();
+  const seed = now.getFullYear() * 10000 + (now.getMonth()+1) * 100 + now.getDate();
+  const shuffled = [...TOPIK_VOCAB];
+  let s = seed;
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    const j = Math.abs(s) % (i + 1);
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled.slice(0, 5);
 }
 
+let quizWords = [], quizIdx = 0;
+
+function openQuiz() {
+  quizWords = getDailyWords();
+  quizIdx = 0;
+  document.getElementById('quizSetLabel').textContent =
+    new Date().toLocaleDateString('en', { month:'short', day:'numeric' });
+  showQuizWord();
+  document.getElementById('quizOverlay').classList.add('open');
+}
+function closeQuiz() {
+  document.getElementById('quizOverlay').classList.remove('open');
+}
+function showQuizWord() {
+  const w = quizWords[quizIdx];
+  document.getElementById('qHangul').textContent = w.h;
+  document.getElementById('qRoman').textContent = w.r;
+  const ans = document.getElementById('qAnswer');
+  ans.textContent = w.e; ans.classList.add('hidden');
+  const ex = document.getElementById('qExample');
+  ex.textContent = w.ex; ex.classList.remove('show');
+  document.getElementById('qRevealBtn').style.display = 'block';
+  document.getElementById('qCounter').textContent = `${quizIdx + 1} of ${quizWords.length}`;
+}
+function revealAnswer() {
+  document.getElementById('qAnswer').classList.remove('hidden');
+  document.getElementById('qExample').classList.add('show');
+  document.getElementById('qRevealBtn').style.display = 'none';
+}
+function nextWord() {
+  if (quizIdx < quizWords.length - 1) { quizIdx++; showQuizWord(); }
+  else { closeQuiz(); toast('Quiz done — 수고했어요! 🎉'); }
+}
+function prevWord() { if (quizIdx > 0) { quizIdx--; showQuizWord(); } }
+document.getElementById('quizOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeQuiz();
+});
+
 renderAll();
-</script>
 </body>
 </html>
